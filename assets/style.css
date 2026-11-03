@@ -306,3 +306,33 @@ nav > a:after {
 @media (max-width: 600px) {
   #reviews { padding-block: 27.5px; }
 }
+
+.section.mosaic-section {
+  padding-block: 44px;
+}
+@media (max-width: 900px) {
+  .section.mosaic-section { padding-block: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.mosaic-section { padding-block: 27.5px; }
+}
+
+#contact {
+  padding-top: 44px;
+}
+@media (max-width: 900px) {
+  #contact { padding-top: 32.5px; }
+}
+@media (max-width: 600px) {
+  #contact { padding-top: 27.5px; }
+}
+
+.section.journey-section {
+  padding-bottom: 44px;
+}
+@media (max-width: 900px) {
+  .section.journey-section { padding-bottom: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.journey-section { padding-bottom: 27.5px; }
+}
