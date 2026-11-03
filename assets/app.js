@@ -50,7 +50,54 @@ window.addEventListener('pageshow',()=>document.querySelector('.page-transition'
 const aboutCopy=[['We connect the dots between what your customers search for, what catches their eye and what makes them choose you.','From Google Ads and Search to YouTube and Meta, our approach brings creative thinking and practical measurement into the same room.'],['Give every impression a reason to become a connection. We shape messages around your audience, your brand and the moments that matter.','From a YouTube opening frame to a Meta campaign, creative direction and testing work together to make the next idea more relevant.']];
 all('[data-about-tab]').forEach((b,i)=>{b.onclick=()=>{all('[data-about-tab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));const p=document.querySelector('#about-panel');p.innerHTML=aboutCopy[i].map(t=>'<p>'+t+'</p>').join('');p.style.animation='none';void p.offsetWidth;p.style.animation='reveal .4s'};b.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const next=all('[data-about-tab]')[1-i];next.focus();next.click()}}});
 const counters=new IntersectionObserver(entries=>entries.forEach(e=>{if(!e.isIntersecting)return;counters.unobserve(e.target);const target=Number(e.target.dataset.count);if(reduced){e.target.textContent=target;return}const start=performance.now();function frame(now){const t=Math.min((now-start)/1600,1);e.target.textContent=Math.round(10+(target-10)*(1-Math.pow(1-t,3)));if(t<1)requestAnimationFrame(frame)}requestAnimationFrame(frame)}),{threshold:.5});all('[data-count]').forEach(x=>counters.observe(x));
-all('[data-coverflow]').forEach(root=>{let index=0,start=0,moved=false;const cards=Array.from(root.querySelectorAll('.coverflow-stage>a')),dots=Array.from(root.querySelectorAll('[data-cover-index]'));function render(){cards.forEach((card,i)=>{let offset=(i-index+cards.length)%cards.length;if(offset>2)offset-=cards.length;card.style.setProperty('--offset',offset);card.style.setProperty('--distance',Math.abs(offset));card.tabIndex=offset===0?0:-1;card.setAttribute('aria-hidden',String(offset!==0))});dots.forEach((d,i)=>{d.classList.toggle('active',i===index);d.setAttribute('aria-pressed',String(i===index))})}const move=d=>{index=(index+d+cards.length)%cards.length;render()};root.querySelector('[data-cover-prev]').onclick=()=>move(-1);root.querySelector('[data-cover-next]').onclick=()=>move(1);dots.forEach((d,i)=>d.onclick=()=>{index=i;render()});root.addEventListener('pointerdown',e=>{start=e.clientX;moved=false});root.addEventListener('pointerup',e=>{if(Math.abs(e.clientX-start)>40){moved=true;move(e.clientX<start?1:-1)}});root.addEventListener('click',e=>{if(moved){e.preventDefault();moved=false}},true);root.addEventListener('dragstart',e=>e.preventDefault());render()});
+all('[data-coverflow]').forEach(root=>{
+  let index=0,start=0,moved=false,pointerActive=false,timer;
+  const cards=Array.from(root.querySelectorAll('.coverflow-stage>a'));
+  const dots=Array.from(root.querySelectorAll('[data-cover-index]'));
+  function render(){
+    cards.forEach((card,i)=>{
+      let offset=(i-index+cards.length)%cards.length;
+      if(offset>Math.floor(cards.length/2))offset-=cards.length;
+      card.style.setProperty('--offset',offset);
+      card.style.setProperty('--distance',Math.abs(offset));
+      card.tabIndex=offset===0?0:-1;
+      card.setAttribute('aria-hidden',String(offset!==0));
+    });
+    dots.forEach((dot,i)=>{
+      dot.classList.toggle('active',i===index);
+      dot.setAttribute('aria-pressed',String(i===index));
+    });
+  }
+  function startAutoplay(){
+    clearInterval(timer);
+    if(reduced||cards.length<2)return;
+    timer=setInterval(()=>{
+      const bounds=root.getBoundingClientRect();
+      if(document.hidden||pointerActive||root.matches(':hover')||root.contains(document.activeElement)||bounds.top>=innerHeight||bounds.bottom<=0)return;
+      move(1);
+    },4500);
+  }
+  function move(direction){
+    index=(index+direction+cards.length)%cards.length;
+    render();
+    startAutoplay();
+  }
+  root.querySelector('[data-cover-prev]').onclick=()=>move(-1);
+  root.querySelector('[data-cover-next]').onclick=()=>move(1);
+  dots.forEach((dot,i)=>dot.onclick=()=>{index=i;render();startAutoplay()});
+  root.addEventListener('pointerdown',e=>{start=e.clientX;moved=false;pointerActive=true});
+  root.addEventListener('pointerup',e=>{
+    pointerActive=false;
+    if(Math.abs(e.clientX-start)>40){moved=true;move(e.clientX<start?1:-1)}
+    else startAutoplay();
+  });
+  root.addEventListener('pointercancel',()=>{pointerActive=false;startAutoplay()});
+  root.addEventListener('pointerleave',()=>{pointerActive=false;startAutoplay()});
+  root.addEventListener('click',e=>{if(moved){e.preventDefault();moved=false}},true);
+  root.addEventListener('dragstart',e=>e.preventDefault());
+  render();
+  startAutoplay();
+});
 
 if('IntersectionObserver' in window&&!reduced){const motionObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add(e.target.hasAttribute('data-heading')?'heading-visible':'puzzle-visible');motionObserver.unobserve(e.target)}}),{threshold:.01,rootMargin:'60px 0px'});all('[data-heading],[data-puzzle]').forEach((el,i)=>{el.classList.add(el.hasAttribute('data-heading')?'heading-ready':'puzzle-ready');if(el.hasAttribute('data-puzzle')){el.style.setProperty('--reveal-delay',(Array.from(el.parentElement.children).indexOf(el)%4)*140+'ms');el.style.setProperty('--puzzle-x',i%2?'-1':'1')}motionObserver.observe(el)})}
 all('[data-slideshow]').forEach(root=>{const slides=Array.from(root.querySelectorAll('.quote-slide'));let index=0;const next=()=>{if(document.hidden||root.matches(':hover')||root.contains(document.activeElement))return;slides[index].classList.remove('is-current');slides[index].setAttribute('aria-hidden','true');index=(index+1)%slides.length;slides[index].classList.add('is-current');slides[index].setAttribute('aria-hidden','false')};if(!reduced)setInterval(next,6500)});
