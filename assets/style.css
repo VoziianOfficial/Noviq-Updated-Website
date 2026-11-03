@@ -336,3 +336,8 @@ nav > a:after {
 @media (max-width: 600px) {
   .section.journey-section { padding-bottom: 27.5px; }
 }
+
+.service-features-heading {
+  white-space: nowrap;
+  font-size: clamp(16px, 4vw, 52px);
+}
