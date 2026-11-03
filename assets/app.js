@@ -15,7 +15,31 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){nav.classList.remov
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if('IntersectionObserver' in window){document.body.classList.add('js-reveal');const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.01,rootMargin:'80px 0px'});all('[data-reveal]').forEach((el,i)=>{el.style.transitionDelay=(i%3)*65+'ms';observer.observe(el)})}
 all('[data-carousel]').forEach(root=>{const track=root.querySelector('.carousel-track');let busy=false;function move(direction){if(busy)return;busy=true;const width=track.firstElementChild.getBoundingClientRect().width+parseFloat(getComputedStyle(track).gap||22);if(direction<0){track.style.transition='none';track.prepend(track.lastElementChild);track.style.transform=`translateX(-${width}px)`;track.getBoundingClientRect();track.style.transition='transform .6s cubic-bezier(.2,.75,.2,1)';track.style.transform='translateX(0)'}else{track.style.transform=`translateX(-${width}px)`}setTimeout(()=>{if(direction>0){track.style.transition='none';track.append(track.firstElementChild);track.style.transform='translateX(0)';track.getBoundingClientRect();track.style.transition='transform .6s cubic-bezier(.2,.75,.2,1)'}busy=false},reduced?0:620)}root.querySelector('[data-prev]').onclick=()=>move(-1);root.querySelector('[data-next]').onclick=()=>move(1);let start=0;let swiped=false;track.addEventListener('pointerdown',e=>{start=e.clientX;swiped=false});track.addEventListener('pointerup',e=>{if(Math.abs(e.clientX-start)>40){swiped=true;move(e.clientX<start?1:-1)}});track.addEventListener('click',e=>{if(swiped){e.preventDefault();e.stopPropagation();swiped=false}},true);track.addEventListener('dragstart',e=>e.preventDefault());let timer;const run=()=>{clearInterval(timer);if(!reduced)timer=setInterval(()=>{if(!document.hidden&&root.getBoundingClientRect().top<innerHeight&&root.getBoundingClientRect().bottom>0)move(1)},5500)};run();root.addEventListener('mouseenter',()=>clearInterval(timer));root.addEventListener('mouseleave',run);root.addEventListener('focusin',()=>clearInterval(timer));root.addEventListener('focusout',()=>{clearInterval(timer);run()})});
-all('.project-panel').forEach(panel=>{const activate=()=>{all('.project-panel').forEach(x=>x.classList.remove('active'));panel.classList.add('active')};panel.addEventListener('mouseenter',activate);panel.addEventListener('focus',activate);panel.addEventListener('click',e=>{if(matchMedia('(hover:none)').matches&&!panel.classList.contains('active')){e.preventDefault();activate()}})});
+all('.project-panels').forEach(root=>{
+  const panels=Array.from(root.querySelectorAll('.project-panel'));
+  let hoverTimer;
+  const cancelHover=()=>clearTimeout(hoverTimer);
+  const activate=panel=>{
+    cancelHover();
+    if(panel.classList.contains('active'))return;
+    panels.forEach(item=>item.classList.toggle('active',item===panel));
+  };
+  panels.forEach(panel=>{
+    panel.addEventListener('mouseenter',()=>{
+      cancelHover();
+      hoverTimer=setTimeout(()=>activate(panel),120);
+    });
+    panel.addEventListener('mouseleave',cancelHover);
+    panel.addEventListener('focus',()=>activate(panel));
+    panel.addEventListener('click',e=>{
+      if(matchMedia('(hover:none)').matches&&!panel.classList.contains('active')){
+        e.preventDefault();
+        activate(panel);
+      }
+    });
+  });
+  root.addEventListener('mouseleave',cancelHover);
+});
 all('[data-billing]').forEach(b=>b.onclick=()=>{all('[data-billing]').forEach(x=>x.classList.toggle('active',x===b));const quarterly=b.dataset.billing==='quarterly';all('[data-price]').forEach(x=>x.textContent='$'+(Number(x.dataset.price)*(quarterly?3:1)).toLocaleString('en-US'));all('[data-period]').forEach(x=>x.textContent=quarterly?' / quarter':' / month')});
 const cookie=document.querySelector('.cookie-banner');try{cookie.hidden=!!localStorage.getItem('noviq-consent')}catch{}
 all('[data-cookie]').forEach(b=>b.onclick=()=>{try{localStorage.setItem('noviq-consent',b.dataset.cookie)}catch{}cookie.hidden=true});all('.cookie-settings').forEach(b=>b.onclick=()=>{cookie.hidden=false});
