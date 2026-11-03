@@ -341,3 +341,203 @@ nav > a:after {
   white-space: nowrap;
   font-size: clamp(16px, 4vw, 52px);
 }
+
+.service-offer-heading {
+  white-space: nowrap;
+  font-size: clamp(14px, 3.5vw, 52px);
+}
+.service-offer {
+  transition: transform 480ms var(--hover-ease), border-color 480ms var(--hover-ease), box-shadow 480ms var(--hover-ease);
+}
+.service-offer h3,
+.service-offer p,
+.service-offer li,
+.service-offer li .ui-icon {
+  transition: color 420ms var(--hover-ease), transform 480ms var(--hover-ease);
+}
+.service-offer strong {
+  display: inline-block;
+  transition: transform 480ms var(--hover-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .service-offer:hover {
+    transform: translateY(-2px);
+    border-color: #cbbaff;
+    box-shadow: 0 8px 28px #6845f512;
+  }
+  .service-offer:hover h3,
+  .service-offer:hover li .ui-icon,
+  .service-offer li:hover {
+    color: var(--purple);
+  }
+  .service-offer:hover p {
+    color: #5d536a;
+  }
+  .service-offer:hover strong {
+    transform: translateY(-1px);
+  }
+  .service-offer li:hover {
+    transform: translateX(2px);
+  }
+}
+.service-offer:focus-within {
+  border-color: #cbbaff;
+  box-shadow: 0 8px 28px #6845f512;
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-offer:hover,
+  .service-offer:hover strong,
+  .service-offer li:hover {
+    transform: none;
+  }
+}
+
+.section.service-offer-section {
+  padding-block: 44px;
+}
+@media (max-width: 900px) {
+  .section.service-offer-section { padding-block: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.service-offer-section { padding-block: 27.5px; }
+}
+
+.section.related-section {
+  padding-block: 44px;
+}
+.related-section .related {
+  grid-auto-rows: 1fr;
+}
+.related-section .related .compact-card {
+  min-height: 0 !important;
+  padding: 18px !important;
+  display: flex;
+  flex-direction: column;
+}
+.related-section .related .compact-card > .platform-icon {
+  width: 32px;
+  height: 32px;
+  top: 14px;
+  right: 18px;
+}
+.related-section .related .compact-card h3 {
+  margin: 32px 0 6px;
+}
+.related-section .related .compact-card small {
+  margin-top: auto;
+  padding-right: 24px;
+}
+.related-section .related .compact-card > span:last-of-type {
+  right: 16px;
+  bottom: 16px;
+}
+@media (max-width: 900px) {
+  .section.related-section { padding-block: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.related-section { padding-block: 27.5px; }
+  .related-section .related .compact-card { padding: 14px 12px !important; }
+  .related-section .related .compact-card > .platform-icon {
+    width: 28px;
+    height: 28px;
+    top: 12px;
+    right: 12px;
+  }
+  .related-section .related .compact-card h3 { margin-top: 34px; }
+  .related-section .related .compact-card > span:last-of-type {
+    right: 10px;
+    bottom: 14px;
+  }
+}
+
+.section.growth-toolkit-section {
+  padding-top: 44px;
+}
+@media (max-width: 900px) {
+  .section.growth-toolkit-section { padding-top: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.growth-toolkit-section { padding-top: 27.5px; }
+}
+
+@media (min-width: 901px) {
+  .section.directory-section {
+    overflow: clip;
+  }
+  .directory-section .directory-layout > div:first-child {
+    position: sticky;
+    top: 112px;
+    align-self: start;
+  }
+}
+
+.section.directory-section {
+  padding-bottom: 44px;
+}
+@media (max-width: 900px) {
+  .section.directory-section { padding-bottom: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.directory-section { padding-bottom: 27.5px; }
+}
+
+/* Size the quote card to its content, keeping slide changes stable. */
+.editorial-quote {
+  display: grid;
+  grid-template-areas: "medallion" "quote" "author";
+  row-gap: 22px;
+  min-height: 0;
+  padding: 36px 12%;
+  border-radius: 32px;
+}
+.editorial-quote .quote-medallion {
+  grid-area: medallion;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+}
+.editorial-quote .quote-slide,
+.editorial-quote .quote-slide.is-current {
+  grid-area: quote;
+  display: block;
+  min-height: 0;
+  margin: 0;
+  line-height: 1.55;
+  animation: none;
+  transition: opacity 480ms var(--hover-ease), visibility 480ms;
+}
+.editorial-quote .quote-slide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.editorial-quote .quote-slide.is-current {
+  opacity: 1;
+  visibility: visible;
+}
+.editorial-quote .quote-author {
+  grid-area: author;
+}
+@media (max-width: 600px) {
+  .editorial-quote {
+    padding: 24px 20px;
+    row-gap: 20px;
+    border-radius: 24px;
+  }
+  .editorial-quote .quote-medallion { width: 64px; height: 64px; }
+  .editorial-quote .quote-face.portrait-face { width: 32px; height: 32px; }
+  .editorial-quote .q1 { left: 20px; top: 24px; }
+  .editorial-quote .q2 { right: 20px; top: 24px; }
+  .editorial-quote .q3,
+  .editorial-quote .q4 { display: none; }
+}
+
+.section.quote-section {
+  padding-block: 44px;
+}
+@media (max-width: 900px) {
+  .section.quote-section { padding-block: 32.5px; }
+}
+@media (max-width: 600px) {
+  .section.quote-section { padding-block: 27.5px; }
+}
